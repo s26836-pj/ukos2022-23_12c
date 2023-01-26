@@ -1,0 +1,92 @@
+# zasady wykonywania w PoweShell
+-AllSigned
+-Bypass
+-Default
+-Remotesigned
+-Restricted
+-Undefined
+-Unrestricted
+
+#Get-ExecutionPolicy 
+-Polecenie pobiera obowiazujace zasady wykonywania.
+
+#Set-ExecutionPolicy Bypass
+-Polecenie zmienia zasady wykonywania.
+
+#Get-Help
+-Pomoc z dowolnym poleceniem aby zobaczyc jego skladnie. np.#Get-Help Get-ExecutionPolicy
+
+# Skladnia PowerShell:
+-Czasownik:-NaCzymMaOperowac np. Set-ExecutionPolicy/Create-Item
+
+#Get-Module -ListAvailable
+-Polecenie wyswietla liste modulow PowerShell, ktore 
+zostaly zaimportowane lub ktore mozna zaimportowac do sesji PowerShell
+
+# Jezeli chcemy uruchomic kolejne polecenie na danych wyjsciowych z poprzedniego 
+polecenia uzywamy znaku potok "|" (ang pipeline) np. Command-1 | Command-2 | Command-3
+
+# "?" - skrot od Where-Object
+  "%" - skrot od While-Object (petla)
+  Out-GridView - wypisuje dane w postaci tabelki graficznej otworzonej w nowym okienku
+  Out-File - wypisuje dane do pliku
+  Out-Null - przetworzy dane jednak nic z nimi nie zrobi/nie wypisze
+
+#Start-BitsTransfer -Source http://szuflandia.pjwstk.edu.pl/pub/repo/java/lubuntu_13_04_v02.zip 
+-Destination D:\ -Credential $cred -Authentication Negotiate
+-Polecenie rozpocznie sciaganie pliku ktory zostanie zapisany (-Destination D:\) na dysku D
+-Jezeli nie chcemy blokowac sobie konsoli mozna uzyc:
+#$job = Start-BitsTransfer -Source (..)
+
+-Gdy chcemy zobaczyc stan stransferu korzystamy z komendy
+#Get-BitsTransfer
+
+#Complete-BitsTransfer -BitsJob $job 
+- Polecenia uzywamy gdy w kolumnie JobState jest "Transferred" konczy nam to job transferu
+i od teraz plik jest dostepny w katalogu docelowym
+
+# Measure-Command mierzy czas potrzebny do uruchomienia blokow skryptow i polecen cmdlet.
+
+#Get-Alias | ? {$_.Definition -like "Get-ChildItem"}
+Pokazuje nam aliasy polecenia np:ls, dir
+
+# W PS mozna uruchamiac innt programy, sluzy do tego operator wywolania ktory ma postac znaku "&" np:
+#& C:\Windows\notepad.exe
+
+#Get-PSDrive
+-Wypisze nam liste "dyskow" dostepnych w PS (dysk z jedna literka to normalny windowsowy dysk) jak:
+-HKLM -zawiera najważniejsze informacje o konfiguracji komputera niezbedne do prawidlowego uruchomienia 
+systemu Windows - zainstalowany sprzet i programy oraz parametry systemu
+-WSMan -Zapewnia dostep do informacji o konfiguracji uslug sieci Web na potrzeby zarzadzania (WS-Management).
+-Variable -dysk, który wygląda i działa jak dysk systemu plikow, ale zawiera zmienne w sesji i ich wartosci
+-HKCU - Informacje tu zawarte to miedzy innymi ustawienia pulpitu czy menu Start 
+oraz ustawienia zainstalowanych programow.
+
+# Poza tymi dyskami sa jeszcze inne, ktore mozna sobie dodac/dograc np:
+ - GH - GitHub - tak, można po githubie "chodzic" w PowerShell-u
+ - AD - ActiveDirectory - dodaje dysk dajacy dostęp do ActiveDirectory
+-Takie dyski dodaje sie przez zaladowanie specjalnych modulow, ktore takie dyski udostepniaja.
+
+# w PS mozna tworzyc takze funkcje:
+
+function Get-MrParameterCount {
+    param (
+        [string[]]$ParameterName
+    )
+
+    foreach ($Parameter in $ParameterName) {
+        $Results = Get-Command -ParameterName $Parameter -ErrorAction SilentlyContinue
+
+        [pscustomobject]@{
+            ParameterName = $Parameter
+            NumberOfCmdlets = $Results.Count
+        }
+    }
+}
+
+-funkcja powyzej wykona zapytanie o wszystkie polecenia w systemie i zwróci liczbe tych polecen, ktore 
+maja okreslone nazwy parametrow.
+
+
+
+
